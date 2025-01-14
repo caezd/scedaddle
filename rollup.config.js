@@ -1,14 +1,18 @@
-import { uglify } from 'rollup-plugin-uglify';
+import resolve from "@rollup/plugin-node-resolve";
+import commonjs from "@rollup/plugin-commonjs";
 
 export default {
-    input: 'src/main.js',
-    output: {
-        file: 'dist/switcheroo.js',
-        format: 'iife',
-        globals: {
-            jquery: '$'
-          }
-    },
-    external: ['jquery'],
-    /* plugins: [uglify()] */
+    input: "src/main.js",
+    output: [
+        {
+            file: "dist/scedaddle.js",
+            format: "iife",
+        },
+    ],
+    plugins: [
+        commonjs(),
+        resolve({
+            browser: true,
+        }),
+    ],
 };

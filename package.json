@@ -1,17 +1,26 @@
 {
-  "name": "projectboilerplate",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "build": "rollup --config --name %npm_package_outputname%",
-    "serve": "http-server ./dist/"
-  },
-  "outputname": "App",
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@rollup/plugin-node-resolve": "^13.0.5",
-    "rollup-plugin-uglify": "^6.0.4"
-  }
+    "name": "scedaddle",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "type": "module",
+    "scripts": {
+        "build": "rollup --config --name Scedaddle",
+        "serve": "http-server ./dist/"
+    },
+    "outputname": "Scedaddle",
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@rollup/plugin-commonjs": "^23.0.2",
+        "@rollup/plugin-node-resolve": "^13.3.0",
+        "rollup-plugin-uglify": "^6.0.4"
+    },
+    "dependencies": {
+        "@poumon/potion": "^1.0.3",
+        "flat-colors": "^3.3.12",
+        "rollup": "^3.2.3",
+        "shortway": "^0.5.0",
+        "simple-color-picker": "^1.0.5"
+    }
 }
