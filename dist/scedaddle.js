@@ -1863,7 +1863,7 @@ var Scedaddle = (function () {
 	            style: "display:none;",
 	        });
 	        document.body.appendChild(iframe);
-	        console.log(iframe.contentWindow);
+	        console.log(iframe.contentDocument);
 	    };
 
 	    registerCustomElement = (tagName) => {

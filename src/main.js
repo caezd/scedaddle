@@ -273,7 +273,15 @@ export default function Editor(origine, customOptions = {}) {
             style: "display:none;",
         });
         document.body.appendChild(iframe);
-        console.log(iframe.contentWindow);
+        console.log(iframe.contentDocument);
+        /* addImageProcess(src){
+  return new Promise((resolve, reject) => {
+    let img = new Image()
+    img.onload = () => resolve(img.height)
+    img.onerror = reject
+    img.src = src
+  })
+} */
     };
 
     registerCustomElement = (tagName) => {
