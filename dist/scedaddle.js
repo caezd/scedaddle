@@ -1807,8 +1807,6 @@ var Scedaddle = (function () {
 
 	    let dropdown;
 
-	    let toolbarContainer;
-
 	    let toolbarButtons = {};
 
 	    let btnStateHandlers = [];
@@ -2032,7 +2030,6 @@ var Scedaddle = (function () {
 	            });
 
 	            if (group.firstChild) {
-	                toolbarContainer = toolbar;
 	                appendChild$1(toolbar, group);
 	            }
 	        });
@@ -2447,7 +2444,7 @@ var Scedaddle = (function () {
 	        });
 
 	        appendChild$1(dropdown, content);
-	        appendChild$1(toolbarContainer, dropdown);
+	        appendChild$1(editorContainer, dropdown);
 	        on(dropdown, "click focusin", function (e) {
 	            // stop clicks within the dropdown from being handled
 	            e.stopPropagation();
@@ -2479,6 +2476,7 @@ var Scedaddle = (function () {
 
 	    base.closeDropDown = (focus) => {
 	        if (dropdown) {
+	            emojisOpen = false;
 	            remove(dropdown);
 	            dropdown = null;
 	        }

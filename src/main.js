@@ -692,7 +692,7 @@ export default function Editor(origine, customOptions = {}) {
         });
 
         dom.appendChild(dropdown, content);
-        dom.appendChild(toolbarContainer, dropdown);
+        dom.appendChild(editorContainer, dropdown);
         dom.on(dropdown, "click focusin", function (e) {
             // stop clicks within the dropdown from being handled
             e.stopPropagation();
@@ -724,6 +724,7 @@ export default function Editor(origine, customOptions = {}) {
 
     base.closeDropDown = (focus) => {
         if (dropdown) {
+            emojisOpen = false;
             dom.remove(dropdown);
             dropdown = null;
         }
