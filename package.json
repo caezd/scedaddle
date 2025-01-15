@@ -6,6 +6,7 @@
     "type": "module",
     "scripts": {
         "build": "rollup --config --name Scedaddle",
+        "watch": "rollup -w --config --name Scedaddle",
         "serve": "http-server ./dist/"
     },
     "outputname": "Scedaddle",
@@ -21,6 +22,7 @@
         "flat-colors": "^3.3.12",
         "rollup": "^3.2.3",
         "shortway": "^0.5.0",
-        "simple-color-picker": "^1.0.5"
+        "simple-color-picker": "^1.0.5",
+        "textarea-caret": "^3.1.0"
     }
 }

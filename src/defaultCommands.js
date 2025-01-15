@@ -319,6 +319,7 @@ var defaultCommands = {
         format: "customHtml",
         wrapper: ["<triggers>", "</triggers>"],
         shortcut: "",
+        tooltip: "Trigger warning",
     },
     // END COMMAND: Trigger Warnings
     // START COMMAND: Headings
@@ -355,6 +356,7 @@ var defaultCommands = {
         },
         icon: Icon.headings,
         shortcut: "ctrl+h",
+        tooltip: "Titres",
     },
     // END COMMAND: Headings
     // START COMMAND: Colors
@@ -597,24 +599,52 @@ var defaultCommands = {
         wrapper: ['[color="{0}"]', "[/color]"],
         icon: Icon.color,
         shortcut: "ctrl+k",
+        tooltip: "Couleur du texte",
     },
     // END COMMAND: Colors
     // START COMMAND: Presets
     presets: {
+        _presetList: function () {
+            const cmd = defaultCommands.presets;
+            let html = "";
+
+            const presets = cmd._getPresets();
+            console.log(presets);
+            if (presets.length === 0)
+                return `<div class="sceddadle__presets-tab empty">Il n'y a pas encore de presets.</div>`;
+
+            return "hello wrold";
+        },
+        _getPresets: function () {
+            return localStorage.getItem("presets") || [];
+            // titre, desc, content (render with potion), image
+            // from localstorage
+            // add option to in commands init?
+        },
+        _presetCreation: function () {
+            return "";
+        },
         _dropDown: function (editor, caller, callback) {
             let content = dom.createElement("div"),
                 cmd = defaultCommands.presets;
-            let template = new Potion("<div>{{test}}</div>");
+
+            /* let template = new Potion("<div>{{test}}</div>");
             const test = template.render({
                 test: "hey",
-            });
+            }); */
 
             const presets = editor.opts?.presets;
 
+            const tabs = editor.createMenu("presets", {
+                Prédéfinis: cmd._presetList(),
+                Créer: cmd._presetCreation(),
+            });
+
+            dom.appendChild(content, tabs);
+
             dom.on(content, "click", "button", function (e) {
-                callback(dom.data(this, "color"));
-                console.log(test);
-                editor.closeDropDown(true);
+                /* callback(dom.data(this, "color"));
+                editor.closeDropDown(true); */
                 e.preventDefault();
             });
 
@@ -644,6 +674,7 @@ var defaultCommands = {
         format: "bbcode",
         wrapper: ["[b]", "[/b]"],
         shortcut: "ctrl+b",
+        tooltip: "Gras",
     },
     // END COMMAND: Bold
     // START COMMAND: Italic
@@ -653,6 +684,7 @@ var defaultCommands = {
         format: "bbcode",
         wrapper: ["[i]", "[/i]"],
         shortcut: "ctrl+i",
+        tooltip: "Italique",
     },
     // END COMMAND: Italic
     // START COMMAND: Underline
@@ -662,6 +694,7 @@ var defaultCommands = {
         format: "bbcode",
         wrapper: ["[u]", "[/u]"],
         shortcut: "ctrl+u",
+        tooltip: "Souligné",
     },
     // END COMMAND: Underline
     // START COMMAND: Strikethrough
@@ -671,6 +704,7 @@ var defaultCommands = {
         format: "bbcode",
         wrapper: "[s]|[/s]",
         shortcut: "ctrl+s",
+        tooltip: "Barré",
     },
     // END COMMAND: Strikethrough
     // START COMMAND: Superscript
@@ -680,6 +714,7 @@ var defaultCommands = {
         format: "bbcode",
         wrapper: "[sup]|[/sup]",
         shortcut: "ctrl+shift+.",
+        tooltip: "Exposant",
     },
     // END COMMAND: Superscript
     // START COMMAND: Subscript
@@ -689,6 +724,7 @@ var defaultCommands = {
         format: "bbcode",
         wrapper: "[sub]|[/sub]",
         shortcut: "ctrl+shift+,",
+        tooltip: "Indice",
     },
     // END COMMAND: Subscript
     // START COMMAND: Quote
@@ -698,6 +734,7 @@ var defaultCommands = {
         format: "bbcode",
         wrapper: "[quote]|[/quote]",
         shortcut: "ctrl+q",
+        tooltip: "Citation",
     },
     // END COMMAND: Quote
     // START COMMAND: Code
@@ -707,6 +744,7 @@ var defaultCommands = {
         format: "bbcode",
         wrapper: "[code]|[/code]",
         shortcut: "ctrl+shift+c",
+        tooltip: "Code",
     },
     // END COMMAND: Code
     // START COMMAND: Unordered List
@@ -716,6 +754,7 @@ var defaultCommands = {
         format: "bbcode",
         wrapper: "[ul][li]|[/li][/ul]",
         shortcut: "ctrl+shift+8",
+        tooltip: "Liste non-ordonnée",
     },
     // END COMMAND: Unordered List
     // START COMMAND: Ordered List
@@ -725,6 +764,7 @@ var defaultCommands = {
         format: "bbcode",
         wrapper: "[ol][li]|[/li][/ol]",
         shortcut: "ctrl+shift+7",
+        tooltip: "Liste ordonnée",
     },
     // END COMMAND: Ordered List
     // START COMMAND: Align Left
@@ -734,6 +774,7 @@ var defaultCommands = {
         format: "bbcode",
         wrapper: "[left]|[/left]",
         shortcut: "ctrl+shift+l",
+        tooltip: "Alignement gauche",
     },
     // END COMMAND: Align Left
     // START COMMAND: Align Center
@@ -743,6 +784,7 @@ var defaultCommands = {
         format: "bbcode",
         wrapper: "[center]|[/center]",
         shortcut: "ctrl+shift+c",
+        tooltip: "Alignement centre",
     },
     // END COMMAND: Align Center
     // START COMMAND: Align Right
@@ -752,6 +794,7 @@ var defaultCommands = {
         format: "bbcode",
         wrapper: "[right]|[/right]",
         shortcut: "ctrl+shift+r",
+        tooltip: "Alignement droit",
     },
     // END COMMAND: Align Right
     // START COMMAND: Align Justify
@@ -761,6 +804,7 @@ var defaultCommands = {
         format: "bbcode",
         wrapper: "[justify]|[/justify]",
         shortcut: "ctrl+shift+j",
+        tooltip: "Alignement justifié",
     },
     // END COMMAND: Align Justify
     // START COMMAND: Link
@@ -769,6 +813,7 @@ var defaultCommands = {
         icon: Icon.link,
         format: "bbcode",
         wrapper: "[url{1}]|[/url]",
+        tooltip: "Lien",
     },
     // END COMMAND: LINK
     // START COMMAND: AT
@@ -794,6 +839,7 @@ var defaultCommands = {
         icon: Icon.at,
         format: "bbcode",
         wrapper: "[@]|[/@]",
+        tooltip: "Mention",
     },
     // END COMMAND: AT
     // START COMMAND: IMG
@@ -802,6 +848,7 @@ var defaultCommands = {
         icon: Icon.img,
         format: "bbcode",
         wrapper: ["[img]", "[/img]"],
+        tooltip: "Image",
     },
     // END COMMAND: IMG
 
@@ -811,6 +858,7 @@ var defaultCommands = {
         icon: Icon.hide,
         format: "bbcode",
         wrapper: ["[hide]", "[/hide]"],
+        tooltip: "Caché",
     },
     // END COMMAND: HIDE
     // START COMMAND: SPOILER
@@ -819,6 +867,7 @@ var defaultCommands = {
         icon: Icon.spoiler,
         format: "bbcode",
         wrapper: ["[spoiler]", "[/spoiler]"],
+        tooltip: "Divulgâché",
     },
 };
 

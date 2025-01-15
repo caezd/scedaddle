@@ -95,6 +95,19 @@
     transform: translateX(-50%);
 }
 
+.scedaddle-base-dropdown {
+    top: 0;
+    max-width: 220px;
+    max-height: 350px;
+    overflow: auto;
+    transform: translateY(-100%);
+}
+
+.sceditor__emoji-group {
+    display: flex;
+    flex-flow: row wrap;
+}
+
 .scedaddle-color-picker {
     > div {
         position: relative;

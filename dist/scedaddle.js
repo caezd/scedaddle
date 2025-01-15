@@ -135,7 +135,7 @@ var Scedaddle = (function () {
 	 * @returns {boolean}
 	 */
 	function hasClass(node, className) {
-	    return is(node, '.' + className);
+	    return is(node, "." + className);
 	}
 
 	/**
@@ -149,39 +149,14 @@ var Scedaddle = (function () {
 	    var result = false;
 
 	    if (node && node.nodeType === ELEMENT_NODE) {
-	        result = (node.matches || node.msMatchesSelector ||
-	            node.webkitMatchesSelector).call(node, selector);
+	        result = (
+	            node.matches ||
+	            node.msMatchesSelector ||
+	            node.webkitMatchesSelector
+	        ).call(node, selector);
 	    }
 
 	    return result;
-	}
-
-	/**
-	 * Gets a computed CSS values or sets an inline CSS value
-	 *
-	 * Rules should be in camelCase format and not
-	 * hyphenated like CSS properties.
-	 *
-	 * @param {!HTMLElement} node
-	 * @param {!Object|string} rule
-	 * @param {string|number} [value]
-	 * @return {string|number|undefined}
-	 */
-	function css(node, rule, value) {
-	    if (arguments.length < 3) {
-	        if (isString$1(rule)) {
-	            return node.nodeType === 1 ? getComputedStyle(node)[rule] : null;
-	        }
-
-	        each$1(rule, function (key, value) {
-	            css(node, key, value);
-	        });
-	    } else {
-	        // isNaN returns false for null, false and empty strings
-	        // so need to check it's truthy or 0
-	        var isNumeric = (value || value === 0) && !isNaN(value);
-	        node.style[rule] = isNumeric ? value + 'px' : value;
-	    }
 	}
 
 	/**
@@ -196,23 +171,25 @@ var Scedaddle = (function () {
 	}
 
 	function on(node, events, selector, fn, capture) {
-	    events.split(' ').forEach(function (event) {
+	    events.split(" ").forEach(function (event) {
 	        var handler;
 
 	        if (isString$1(selector)) {
-	            handler = fn['_event-' + event + selector] || function (e) {
-	                var target = e.target;
-	                while (target && target !== node) {
-	                    if (is(target, selector)) {
-	                        fn.call(target, e);
-	                        return;
+	            handler =
+	                fn["_event-" + event + selector] ||
+	                function (e) {
+	                    var target = e.target;
+	                    while (target && target !== node) {
+	                        if (is(target, selector)) {
+	                            fn.call(target, e);
+	                            return;
+	                        }
+
+	                        target = target.parentNode;
 	                    }
+	                };
 
-	                    target = target.parentNode;
-	                }
-	            };
-
-	            fn['_event-' + event + selector] = handler;
+	            fn["_event-" + event + selector] = handler;
 	        } else {
 	            handler = selector;
 	            capture = fn;
@@ -241,7 +218,7 @@ var Scedaddle = (function () {
 	    var node = (context || document).createElement(tag);
 
 	    each$1(attributes || {}, function (key, value) {
-	        if (key === 'style') {
+	        if (key === "style") {
 	            node.style.cssText = value;
 	        } else if (key in node) {
 	            node[key] = value;
@@ -266,7 +243,7 @@ var Scedaddle = (function () {
 	 */
 
 	function wrapElement(toWrap, wrapper, returnElement) {
-	    wrapper = wrapper || document.createElement('div');
+	    wrapper = wrapper || document.createElement("div");
 	    toWrap.parentNode.appendChild(wrapper);
 	    if (returnElement) {
 	        return wrapper.appendChild(toWrap).parentNode;
@@ -274,6 +251,7 @@ var Scedaddle = (function () {
 	        return wrapper.appendChild(toWrap);
 	    }
 	}
+
 	/**
 	 * If only attr param is specified it will get
 	 * the value of the attr param.
@@ -337,10 +315,10 @@ var Scedaddle = (function () {
 	        }
 
 	        if (argsLength === 2) {
-	            return attr(node, 'data-' + key);
+	            return attr(node, "data-" + key);
 	        }
 
-	        attr(node, 'data-' + key, String(value));
+	        attr(node, "data-" + key, String(value));
 	    }
 	}
 
@@ -352,17 +330,17 @@ var Scedaddle = (function () {
 	var ELEMENT_NODE = 1;
 
 	/**
-	* Parses HTML into a document fragment
-	*
-	* @param {string} html
-	* @param {Document} [context]
-	* @return {DocumentFragment}
-	*/
+	 * Parses HTML into a document fragment
+	 *
+	 * @param {string} html
+	 * @param {Document} [context]
+	 * @return {DocumentFragment}
+	 */
 	function parseHTML$1(html, context) {
 	    context = context || document;
 
 	    var ret = context.createDocumentFragment();
-	    var tmp = createElement$1('div', {}, context);
+	    var tmp = createElement$1("div", {}, context);
 
 	    tmp.innerHTML = html;
 
@@ -402,7 +380,7 @@ var Scedaddle = (function () {
 	        classList.push(className);
 	    }
 
-	    node.className = classList.join(' ');
+	    node.className = classList.join(" ");
 	}
 
 	/**
@@ -414,7 +392,7 @@ var Scedaddle = (function () {
 
 	    arrayRemove(classList, className);
 
-	    node.className = classList.join(' ');
+	    node.className = classList.join(" ");
 	}
 
 	function remove(node) {
@@ -446,13 +424,15 @@ var Scedaddle = (function () {
 	    }
 	}
 
+	function addListeners(element, events, handler) {
+	    events.forEach((event) => element.addEventListener(event, handler));
+	}
+
 	var potion_umd_min = {exports: {}};
 
 	(function (module, exports) {
 		!function(e,t){module.exports=t();}(commonjsGlobal,(function(){const e=/\{\{(.+?)\}\}/g;function t(e){this.t=e;}return t.prototype.render=function(t){return n=this.t,o=t,n.replace(e,(function(e,t){var n=function(e,t){return t.split(".").reduce(((e,t)=>e[t]),e)}(o,t);return n||0===n?n:""}));var n,o;},t}));
 	} (potion_umd_min));
-
-	var Potion = potion_umd_min.exports;
 
 	const Icon = {
 	    bold: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bold"><path d="M6 12h9a4 4 0 0 1 0 8H7a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h7a4 4 0 0 1 0 8"/></svg>',
@@ -509,7 +489,7 @@ var Scedaddle = (function () {
 	    var node = (context || document).createElement(tag);
 
 	    each$1(attributes || {}, function (key, value) {
-	        if (key === 'style') {
+	        if (key === "style") {
 	            node.style.cssText = value;
 	        } else if (key in node) {
 	            node[key] = value;
@@ -522,17 +502,17 @@ var Scedaddle = (function () {
 	}
 
 	/**
-	* Parses HTML into a document fragment
-	*
-	* @param {string} html
-	* @param {Document} [context]
-	* @return {DocumentFragment}
-	*/
+	 * Parses HTML into a document fragment
+	 *
+	 * @param {string} html
+	 * @param {Document} [context]
+	 * @return {DocumentFragment}
+	 */
 	function parseHTML(html, context) {
 	    context = context || document;
 
 	    var ret = context.createDocumentFragment();
-	    var tmp = createElement('div', {}, context);
+	    var tmp = createElement("div", {}, context);
 
 	    tmp.innerHTML = html;
 
@@ -919,6 +899,7 @@ var Scedaddle = (function () {
 	        format: "customHtml",
 	        wrapper: ["<triggers>", "</triggers>"],
 	        shortcut: "",
+	        tooltip: "Trigger warning",
 	    },
 	    // END COMMAND: Trigger Warnings
 	    // START COMMAND: Headings
@@ -955,6 +936,7 @@ var Scedaddle = (function () {
 	        },
 	        icon: Icon.headings,
 	        shortcut: "ctrl+h",
+	        tooltip: "Titres",
 	    },
 	    // END COMMAND: Headings
 	    // START COMMAND: Colors
@@ -1197,24 +1179,51 @@ var Scedaddle = (function () {
 	        wrapper: ['[color="{0}"]', "[/color]"],
 	        icon: Icon.color,
 	        shortcut: "ctrl+k",
+	        tooltip: "Couleur du texte",
 	    },
 	    // END COMMAND: Colors
 	    // START COMMAND: Presets
 	    presets: {
+	        _presetList: function () {
+	            const cmd = defaultCommands.presets;
+
+	            const presets = cmd._getPresets();
+	            console.log(presets);
+	            if (presets.length === 0)
+	                return `<div class="sceddadle__presets-tab empty">Il n'y a pas encore de presets.</div>`;
+
+	            return "hello wrold";
+	        },
+	        _getPresets: function () {
+	            return localStorage.getItem("presets") || [];
+	            // titre, desc, content (render with potion), image
+	            // from localstorage
+	            // add option to in commands init?
+	        },
+	        _presetCreation: function () {
+	            return "";
+	        },
 	        _dropDown: function (editor, caller, callback) {
-	            let content = createElement$1("div");
-	                defaultCommands.presets;
-	            let template = new Potion("<div>{{test}}</div>");
+	            let content = createElement$1("div"),
+	                cmd = defaultCommands.presets;
+
+	            /* let template = new Potion("<div>{{test}}</div>");
 	            const test = template.render({
 	                test: "hey",
-	            });
+	            }); */
 
 	            editor.opts?.presets;
 
+	            const tabs = editor.createMenu("presets", {
+	                Prédéfinis: cmd._presetList(),
+	                Créer: cmd._presetCreation(),
+	            });
+
+	            appendChild$1(content, tabs);
+
 	            on(content, "click", "button", function (e) {
-	                callback(data(this, "color"));
-	                console.log(test);
-	                editor.closeDropDown(true);
+	                /* callback(dom.data(this, "color"));
+	                editor.closeDropDown(true); */
 	                e.preventDefault();
 	            });
 
@@ -1244,6 +1253,7 @@ var Scedaddle = (function () {
 	        format: "bbcode",
 	        wrapper: ["[b]", "[/b]"],
 	        shortcut: "ctrl+b",
+	        tooltip: "Gras",
 	    },
 	    // END COMMAND: Bold
 	    // START COMMAND: Italic
@@ -1253,6 +1263,7 @@ var Scedaddle = (function () {
 	        format: "bbcode",
 	        wrapper: ["[i]", "[/i]"],
 	        shortcut: "ctrl+i",
+	        tooltip: "Italique",
 	    },
 	    // END COMMAND: Italic
 	    // START COMMAND: Underline
@@ -1262,6 +1273,7 @@ var Scedaddle = (function () {
 	        format: "bbcode",
 	        wrapper: ["[u]", "[/u]"],
 	        shortcut: "ctrl+u",
+	        tooltip: "Souligné",
 	    },
 	    // END COMMAND: Underline
 	    // START COMMAND: Strikethrough
@@ -1271,6 +1283,7 @@ var Scedaddle = (function () {
 	        format: "bbcode",
 	        wrapper: "[s]|[/s]",
 	        shortcut: "ctrl+s",
+	        tooltip: "Barré",
 	    },
 	    // END COMMAND: Strikethrough
 	    // START COMMAND: Superscript
@@ -1280,6 +1293,7 @@ var Scedaddle = (function () {
 	        format: "bbcode",
 	        wrapper: "[sup]|[/sup]",
 	        shortcut: "ctrl+shift+.",
+	        tooltip: "Exposant",
 	    },
 	    // END COMMAND: Superscript
 	    // START COMMAND: Subscript
@@ -1289,6 +1303,7 @@ var Scedaddle = (function () {
 	        format: "bbcode",
 	        wrapper: "[sub]|[/sub]",
 	        shortcut: "ctrl+shift+,",
+	        tooltip: "Indice",
 	    },
 	    // END COMMAND: Subscript
 	    // START COMMAND: Quote
@@ -1298,6 +1313,7 @@ var Scedaddle = (function () {
 	        format: "bbcode",
 	        wrapper: "[quote]|[/quote]",
 	        shortcut: "ctrl+q",
+	        tooltip: "Citation",
 	    },
 	    // END COMMAND: Quote
 	    // START COMMAND: Code
@@ -1307,6 +1323,7 @@ var Scedaddle = (function () {
 	        format: "bbcode",
 	        wrapper: "[code]|[/code]",
 	        shortcut: "ctrl+shift+c",
+	        tooltip: "Code",
 	    },
 	    // END COMMAND: Code
 	    // START COMMAND: Unordered List
@@ -1316,6 +1333,7 @@ var Scedaddle = (function () {
 	        format: "bbcode",
 	        wrapper: "[ul][li]|[/li][/ul]",
 	        shortcut: "ctrl+shift+8",
+	        tooltip: "Liste non-ordonnée",
 	    },
 	    // END COMMAND: Unordered List
 	    // START COMMAND: Ordered List
@@ -1325,6 +1343,7 @@ var Scedaddle = (function () {
 	        format: "bbcode",
 	        wrapper: "[ol][li]|[/li][/ol]",
 	        shortcut: "ctrl+shift+7",
+	        tooltip: "Liste ordonnée",
 	    },
 	    // END COMMAND: Ordered List
 	    // START COMMAND: Align Left
@@ -1334,6 +1353,7 @@ var Scedaddle = (function () {
 	        format: "bbcode",
 	        wrapper: "[left]|[/left]",
 	        shortcut: "ctrl+shift+l",
+	        tooltip: "Alignement gauche",
 	    },
 	    // END COMMAND: Align Left
 	    // START COMMAND: Align Center
@@ -1343,6 +1363,7 @@ var Scedaddle = (function () {
 	        format: "bbcode",
 	        wrapper: "[center]|[/center]",
 	        shortcut: "ctrl+shift+c",
+	        tooltip: "Alignement centre",
 	    },
 	    // END COMMAND: Align Center
 	    // START COMMAND: Align Right
@@ -1352,6 +1373,7 @@ var Scedaddle = (function () {
 	        format: "bbcode",
 	        wrapper: "[right]|[/right]",
 	        shortcut: "ctrl+shift+r",
+	        tooltip: "Alignement droit",
 	    },
 	    // END COMMAND: Align Right
 	    // START COMMAND: Align Justify
@@ -1361,6 +1383,7 @@ var Scedaddle = (function () {
 	        format: "bbcode",
 	        wrapper: "[justify]|[/justify]",
 	        shortcut: "ctrl+shift+j",
+	        tooltip: "Alignement justifié",
 	    },
 	    // END COMMAND: Align Justify
 	    // START COMMAND: Link
@@ -1369,6 +1392,7 @@ var Scedaddle = (function () {
 	        icon: Icon.link,
 	        format: "bbcode",
 	        wrapper: "[url{1}]|[/url]",
+	        tooltip: "Lien",
 	    },
 	    // END COMMAND: LINK
 	    // START COMMAND: AT
@@ -1394,6 +1418,7 @@ var Scedaddle = (function () {
 	        icon: Icon.at,
 	        format: "bbcode",
 	        wrapper: "[@]|[/@]",
+	        tooltip: "Mention",
 	    },
 	    // END COMMAND: AT
 	    // START COMMAND: IMG
@@ -1402,6 +1427,7 @@ var Scedaddle = (function () {
 	        icon: Icon.img,
 	        format: "bbcode",
 	        wrapper: ["[img]", "[/img]"],
+	        tooltip: "Image",
 	    },
 	    // END COMMAND: IMG
 
@@ -1411,6 +1437,7 @@ var Scedaddle = (function () {
 	        icon: Icon.hide,
 	        format: "bbcode",
 	        wrapper: ["[hide]", "[/hide]"],
+	        tooltip: "Caché",
 	    },
 	    // END COMMAND: HIDE
 	    // START COMMAND: SPOILER
@@ -1419,6 +1446,7 @@ var Scedaddle = (function () {
 	        icon: Icon.spoiler,
 	        format: "bbcode",
 	        wrapper: ["[spoiler]", "[/spoiler]"],
+	        tooltip: "Divulgâché",
 	    },
 	};
 
@@ -1466,6 +1494,149 @@ var Scedaddle = (function () {
 
 	    placeholder: "Rédigez votre message...",
 	};
+
+	var textareaCaret = {exports: {}};
+
+	/* jshint browser: true */
+
+	(function (module) {
+		(function () {
+
+		// We'll copy the properties below into the mirror div.
+		// Note that some browsers, such as Firefox, do not concatenate properties
+		// into their shorthand (e.g. padding-top, padding-bottom etc. -> padding),
+		// so we have to list every single property explicitly.
+		var properties = [
+		  'direction',  // RTL support
+		  'boxSizing',
+		  'width',  // on Chrome and IE, exclude the scrollbar, so the mirror div wraps exactly as the textarea does
+		  'height',
+		  'overflowX',
+		  'overflowY',  // copy the scrollbar for IE
+
+		  'borderTopWidth',
+		  'borderRightWidth',
+		  'borderBottomWidth',
+		  'borderLeftWidth',
+		  'borderStyle',
+
+		  'paddingTop',
+		  'paddingRight',
+		  'paddingBottom',
+		  'paddingLeft',
+
+		  // https://developer.mozilla.org/en-US/docs/Web/CSS/font
+		  'fontStyle',
+		  'fontVariant',
+		  'fontWeight',
+		  'fontStretch',
+		  'fontSize',
+		  'fontSizeAdjust',
+		  'lineHeight',
+		  'fontFamily',
+
+		  'textAlign',
+		  'textTransform',
+		  'textIndent',
+		  'textDecoration',  // might not make a difference, but better be safe
+
+		  'letterSpacing',
+		  'wordSpacing',
+
+		  'tabSize',
+		  'MozTabSize'
+
+		];
+
+		var isBrowser = (typeof window !== 'undefined');
+		var isFirefox = (isBrowser && window.mozInnerScreenX != null);
+
+		function getCaretCoordinates(element, position, options) {
+		  if (!isBrowser) {
+		    throw new Error('textarea-caret-position#getCaretCoordinates should only be called in a browser');
+		  }
+
+		  var debug = options && options.debug || false;
+		  if (debug) {
+		    var el = document.querySelector('#input-textarea-caret-position-mirror-div');
+		    if (el) el.parentNode.removeChild(el);
+		  }
+
+		  // The mirror div will replicate the textarea's style
+		  var div = document.createElement('div');
+		  div.id = 'input-textarea-caret-position-mirror-div';
+		  document.body.appendChild(div);
+
+		  var style = div.style;
+		  var computed = window.getComputedStyle ? window.getComputedStyle(element) : element.currentStyle;  // currentStyle for IE < 9
+		  var isInput = element.nodeName === 'INPUT';
+
+		  // Default textarea styles
+		  style.whiteSpace = 'pre-wrap';
+		  if (!isInput)
+		    style.wordWrap = 'break-word';  // only for textarea-s
+
+		  // Position off-screen
+		  style.position = 'absolute';  // required to return coordinates properly
+		  if (!debug)
+		    style.visibility = 'hidden';  // not 'display: none' because we want rendering
+
+		  // Transfer the element's properties to the div
+		  properties.forEach(function (prop) {
+		    if (isInput && prop === 'lineHeight') {
+		      // Special case for <input>s because text is rendered centered and line height may be != height
+		      style.lineHeight = computed.height;
+		    } else {
+		      style[prop] = computed[prop];
+		    }
+		  });
+
+		  if (isFirefox) {
+		    // Firefox lies about the overflow property for textareas: https://bugzilla.mozilla.org/show_bug.cgi?id=984275
+		    if (element.scrollHeight > parseInt(computed.height))
+		      style.overflowY = 'scroll';
+		  } else {
+		    style.overflow = 'hidden';  // for Chrome to not render a scrollbar; IE keeps overflowY = 'scroll'
+		  }
+
+		  div.textContent = element.value.substring(0, position);
+		  // The second special handling for input type="text" vs textarea:
+		  // spaces need to be replaced with non-breaking spaces - http://stackoverflow.com/a/13402035/1269037
+		  if (isInput)
+		    div.textContent = div.textContent.replace(/\s/g, '\u00a0');
+
+		  var span = document.createElement('span');
+		  // Wrapping must be replicated *exactly*, including when a long word gets
+		  // onto the next line, with whitespace at the end of the line before (#7).
+		  // The  *only* reliable way to do that is to copy the *entire* rest of the
+		  // textarea's content into the <span> created at the caret position.
+		  // For inputs, just '.' would be enough, but no need to bother.
+		  span.textContent = element.value.substring(position) || '.';  // || because a completely empty faux span doesn't render at all
+		  div.appendChild(span);
+
+		  var coordinates = {
+		    top: span.offsetTop + parseInt(computed['borderTopWidth']),
+		    left: span.offsetLeft + parseInt(computed['borderLeftWidth']),
+		    height: parseInt(computed['lineHeight'])
+		  };
+
+		  if (debug) {
+		    span.style.backgroundColor = '#aaa';
+		  } else {
+		    document.body.removeChild(div);
+		  }
+
+		  return coordinates;
+		}
+
+		{
+		  module.exports = getCaretCoordinates;
+		}
+
+		}());
+	} (textareaCaret));
+
+	var getCaretCoordinates = textareaCaret.exports;
 
 	/**
 	 * Check if the passed argument is the
@@ -1644,8 +1815,16 @@ var Scedaddle = (function () {
 
 	    let shortcutHandlers = {};
 
+	    let emojis = [];
+
+	    let emojisOpen = false;
+
+	    let emojiSearch = "";
+
 	    let init,
 	        handleCommand,
+	        handleEmojiSearch,
+	        handleShortcuts,
 	        handleDocumentClick,
 	        handleKeyDown,
 	        initEditor,
@@ -1655,9 +1834,13 @@ var Scedaddle = (function () {
 	        initEvents,
 	        initResize,
 	        parseCommandValues,
-	        registerCustomElement;
+	        registerCustomElement,
+	        fetchEmojis,
+	        callEmojis,
+	        getEmojis,
+	        filterEmojis;
 
-	    base._dropdown = function (button, body, callback) {
+	    base._dropdown = function (button, body, callback, pos) {
 	        let content = createElement$1("div");
 	        content.appendChild(body());
 
@@ -1667,7 +1850,7 @@ var Scedaddle = (function () {
 	            e.preventDefault();
 	        });
 
-	        base.createDropDown(button, "color-picker", content);
+	        base.createDropDown(button, "base-dropdown", content, pos);
 	    };
 
 	    /** @name commands */
@@ -1775,6 +1958,8 @@ var Scedaddle = (function () {
 	                    true
 	                ).firstChild;
 
+	                console.log(button);
+
 	                if (command.icon) {
 	                    let icon = new DOMParser().parseFromString(
 	                        command.icon,
@@ -1816,6 +2001,7 @@ var Scedaddle = (function () {
 	                }
 
 	                if (command.tooltip) {
+	                    // TODO rework des tooltips
 	                    attr(
 	                        button,
 	                        "title",
@@ -1854,16 +2040,110 @@ var Scedaddle = (function () {
 	        appendChild$1(options.toolbarContainer || editorContainer, toolbar);
 	    };
 
-	    initEmojis = () => {
-	        const emojisURL =
-	            "/smilies?mode=smilies_frame&t=" + new Date().getTime();
+	    initEmojis = async () => {
 	        new DocumentFragment();
-	        const iframe = new createElement$1("iframe", {
-	            src: emojisURL,
-	            style: "display:none;",
-	        });
-	        document.body.appendChild(iframe);
-	        console.log(iframe.contentDocument);
+	        const emojisData = await getEmojis();
+	        emojisData.forEach((e) => emojis.push(Array.from(e.images)));
+	    };
+
+	    callEmojis = () => {
+	        const emojisCopy = emojis.map((group) => Array.from(group));
+	        console.log(emojisCopy);
+	        base._dropdown(
+	            origine,
+	            function () {
+	                console.log("Before:", emojisCopy); // Debugging
+	                const content = document.createElement("div");
+	                emojisCopy.forEach((group) => {
+	                    const groupDiv = createElement$1("div", {
+	                        className: "sceditor__emoji-group",
+	                    });
+	                    group.forEach((img) => {
+	                        groupDiv.appendChild(img);
+	                    });
+	                    content.appendChild(groupDiv);
+	                });
+	                console.log("After:", emojisCopy); // Debugging */
+	                return content;
+	            },
+	            function () {
+	                console.log("");
+	            },
+	            true
+	        );
+	    };
+
+	    getEmojis = async () => {
+	        try {
+	            const emojisURL =
+	                "/smilies?mode=smilies_frame&t=" + new Date().getTime();
+	            const pages = [];
+	            await fetchEmojis({ url: emojisURL, pages });
+	            return pages;
+	        } catch (error) {
+	            console.error("Failed to fetch emojis:", error);
+	        }
+	    };
+
+	    fetchEmojis = async ({ url, prev = 0, pages }) => {
+	        try {
+	            const res = await fetch(url + `&categ=${prev}`);
+	            if (!res.ok) throw new Error(`Failed to fetch: ${res.statusText}`);
+
+	            const html = await res.text();
+	            const parser = new DOMParser();
+	            const DOM = parser.parseFromString(html, "text/html");
+	            pages.push(DOM);
+
+	            const next = [
+	                ...DOM.querySelectorAll('select[name="categ"] option'),
+	            ].filter((el) => el.value && Number(el.value) > prev);
+
+	            if (next.length > 0) {
+	                await fetchEmojis({ url, prev: Number(next[0].value), pages });
+	            }
+	        } catch (error) {
+	            console.error("Error fetching emojis:", error);
+	        }
+	    };
+
+	    filterEmojis = () => {
+	        let filteredEmojis = emojis.map((group) =>
+	            group.filter((emoji) => emoji.alt.includes(`:${emojiSearch}`))
+	        );
+
+	        updateEmojiDropdown(filteredEmojis);
+	    };
+
+	    const updateEmojiDropdown = (filteredEmojis) => {
+	        base._dropdown(
+	            origine,
+	            function () {
+	                console.log("Before:", filteredEmojis); // Debugging
+	                const content = document.createElement("div");
+
+	                // Parcours des groupes filtrés
+	                filteredEmojis.forEach((group) => {
+	                    const groupDiv = createElement$1("div", {
+	                        className: "sceditor__emoji-group",
+	                    });
+
+	                    // Ajout des emojis du groupe à l'élément DOM
+	                    group.forEach((img) => {
+	                        groupDiv.appendChild(img);
+	                    });
+
+	                    content.appendChild(groupDiv);
+	                });
+
+	                console.log("After:", filteredEmojis); // Debugging
+	                return content;
+	            },
+	            function () {
+	                console.log("");
+	            },
+	            true
+	        );
 	    };
 
 	    registerCustomElement = (tagName) => {
@@ -1898,16 +2178,40 @@ var Scedaddle = (function () {
 	    initEvents = () => {
 	        on(globalDoc, "click", handleDocumentClick);
 
-	        on(origine, "focus", () =>
-	            addClass(editorContainer.parentNode, "focus")
-	        );
-	        on(origine, "blur", () =>
-	            removeClass(editorContainer.parentNode, "focus")
-	        );
-	        on(origine, "keydown", handleKeyDown);
+	        addListeners(origine, ["focus", "blur", "keydown"], (e) => {
+	            if (e.type === "focus") {
+	                addClass(editorContainer.parentNode, "focus");
+	            } else if (e.type === "blur") {
+	                removeClass(editorContainer.parentNode, "focus");
+	            } else if (e.type === "keydown") {
+	                handleKeyDown(e);
+	            }
+	        });
 	    };
 
 	    handleKeyDown = (e) => {
+	        if (emojisOpen) {
+	            handleEmojiSearch(e);
+	        } else {
+	            handleShortcuts(e);
+	        }
+	    };
+
+	    handleEmojiSearch = (e) => {
+	        if (["Enter", "Escape", " ", "Backspace"].includes(e.key)) {
+	            emojisOpen = false;
+	            emojiSearch = "";
+	            base.closeDropDown();
+	        } else {
+	            if (/^[a-zA-Z0-9]$/.test(e.key)) {
+	                emojiSearch += e.key; // Ajouter la lettre ou le caractère à la recherche
+	            }
+	            console.log(emojiSearch);
+	            filterEmojis();
+	        }
+	    };
+
+	    handleShortcuts = (e) => {
 	        var shortcut = [],
 	            SHIFT_KEYS = {
 	                "`": "~",
@@ -1923,7 +2227,7 @@ var Scedaddle = (function () {
 	                0: ")",
 	                "-": "_",
 	                "=": "+",
-	                ";": ": ",
+	                ";": ":",
 	                "'": '"',
 	                ",": "<",
 	                ".": ">",
@@ -2012,6 +2316,11 @@ var Scedaddle = (function () {
 	            which = e.which,
 	            character =
 	                SPECIAL_KEYS[which] || String.fromCharCode(which).toLowerCase();
+
+	        if (e.key == ":") {
+	            emojisOpen = true;
+	            callEmojis();
+	        }
 
 	        if (e.ctrlKey || e.metaKey) {
 	            shortcut.push("ctrl");
@@ -2122,10 +2431,9 @@ var Scedaddle = (function () {
 	        return origine.value.substring(base.selectionStart, base.selectionEnd);
 	    };
 
-	    base.createDropDown = (menuItem, name, content) => {
+	    base.createDropDown = (menuItem, name, content, pos) => {
 	        // first click for create second click for close
-	        var dropDownCss,
-	            dropDownClass = "scedaddle-" + name;
+	        var dropDownClass = "scedaddle-" + name;
 
 	        base.closeDropDown();
 
@@ -2138,18 +2446,26 @@ var Scedaddle = (function () {
 	            className: "sceddadle__dropdown " + dropDownClass,
 	        });
 
-	        dropDownCss = extend({
-	            bottom: menuItem.offsetHeight + 10,
-	            left: menuItem.offsetLeft + menuItem.offsetWidth / 2,
-	        });
-
-	        css(dropdown, dropDownCss);
 	        appendChild$1(dropdown, content);
 	        appendChild$1(toolbarContainer, dropdown);
 	        on(dropdown, "click focusin", function (e) {
 	            // stop clicks within the dropdown from being handled
 	            e.stopPropagation();
 	        });
+
+	        if (pos) {
+	            const { left, top } = getCaretCoordinates(origine);
+	            const viewportWidth = window.innerWidth;
+	            const textarea = origine.getBoundingClientRect();
+	            console.log(left + textarea.left);
+	            if (left + textarea.left < viewportWidth / 2) {
+	                // Si le caret est dans la première moitié de l'écran, placer le dropdown à droite
+	                dropdown.style.left = `-${dropdown.offsetWidth + 24}px`;
+	            } else {
+	                // Si le caret est dans la deuxième moitié de l'écran, placer le dropdown à gauche
+	                dropdown.style.left = `${textarea.width + 24}px`;
+	            }
+	        }
 
 	        /*
 	        if (dropdown) {

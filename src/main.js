@@ -2,6 +2,7 @@ import { getRange, isSelectionInside } from "./selection.js";
 import defaultCommands from "./defaultCommands.js";
 import defaultOptions from "./defaultOptions.js";
 import _tmpl from "./templates.js";
+import getCaretCoordinates from "textarea-caret";
 
 import * as dom from "../../Helpers/DOM.js";
 import * as utils from "../../Helpers/Utils.js";
@@ -48,12 +49,20 @@ export default function Editor(origine, customOptions = {}) {
 
     let shortcutHandlers = {};
 
+    let emojis = [];
+
+    let emojisOpen = false;
+
+    let emojiSearch = "";
+
     /** The min and max heights that autoExpand should stay within. */
     let autoExpandBounds;
 
     let init,
         handleCommand,
         handleMouseDown,
+        handleEmojiSearch,
+        handleShortcuts,
         handleDocumentClick,
         handleKeyDown,
         initEditor,
@@ -63,9 +72,13 @@ export default function Editor(origine, customOptions = {}) {
         initEvents,
         initResize,
         parseCommandValues,
-        registerCustomElement;
+        registerCustomElement,
+        fetchEmojis,
+        callEmojis,
+        getEmojis,
+        filterEmojis;
 
-    base._dropdown = function (button, body, callback) {
+    base._dropdown = function (button, body, callback, pos) {
         let content = dom.createElement("div");
         content.appendChild(body());
 
@@ -75,7 +88,7 @@ export default function Editor(origine, customOptions = {}) {
             e.preventDefault();
         });
 
-        base.createDropDown(button, "color-picker", content);
+        base.createDropDown(button, "base-dropdown", content, pos);
     };
 
     /** @name commands */
@@ -185,6 +198,8 @@ export default function Editor(origine, customOptions = {}) {
                     true
                 ).firstChild;
 
+                console.log(button);
+
                 if (command.icon) {
                     let icon = new DOMParser().parseFromString(
                         command.icon,
@@ -226,6 +241,7 @@ export default function Editor(origine, customOptions = {}) {
                 }
 
                 if (command.tooltip) {
+                    // TODO rework des tooltips
                     dom.attr(
                         button,
                         "title",
@@ -264,24 +280,110 @@ export default function Editor(origine, customOptions = {}) {
         dom.appendChild(options.toolbarContainer || editorContainer, toolbar);
     };
 
-    initEmojis = () => {
-        const emojisURL =
-            "/smilies?mode=smilies_frame&t=" + new Date().getTime();
+    initEmojis = async () => {
         const fragment = new DocumentFragment();
-        const iframe = new dom.createElement("iframe", {
-            src: emojisURL,
-            style: "display:none;",
-        });
-        document.body.appendChild(iframe);
-        console.log(iframe.contentDocument);
-        /* addImageProcess(src){
-  return new Promise((resolve, reject) => {
-    let img = new Image()
-    img.onload = () => resolve(img.height)
-    img.onerror = reject
-    img.src = src
-  })
-} */
+        const emojisData = await getEmojis();
+        emojisData.forEach((e) => emojis.push(Array.from(e.images)));
+    };
+
+    callEmojis = () => {
+        const emojisCopy = emojis.map((group) => Array.from(group));
+        console.log(emojisCopy);
+        base._dropdown(
+            origine,
+            function () {
+                console.log("Before:", emojisCopy); // Debugging
+                const content = document.createElement("div");
+                emojisCopy.forEach((group) => {
+                    const groupDiv = dom.createElement("div", {
+                        className: "sceditor__emoji-group",
+                    });
+                    group.forEach((img) => {
+                        groupDiv.appendChild(img);
+                    });
+                    content.appendChild(groupDiv);
+                });
+                console.log("After:", emojisCopy); // Debugging */
+                return content;
+            },
+            function () {
+                console.log("");
+            },
+            true
+        );
+    };
+
+    getEmojis = async () => {
+        try {
+            const emojisURL =
+                "/smilies?mode=smilies_frame&t=" + new Date().getTime();
+            const pages = [];
+            await fetchEmojis({ url: emojisURL, pages });
+            return pages;
+        } catch (error) {
+            console.error("Failed to fetch emojis:", error);
+        }
+    };
+
+    fetchEmojis = async ({ url, prev = 0, pages }) => {
+        try {
+            const res = await fetch(url + `&categ=${prev}`);
+            if (!res.ok) throw new Error(`Failed to fetch: ${res.statusText}`);
+
+            const html = await res.text();
+            const parser = new DOMParser();
+            const DOM = parser.parseFromString(html, "text/html");
+            pages.push(DOM);
+
+            const next = [
+                ...DOM.querySelectorAll('select[name="categ"] option'),
+            ].filter((el) => el.value && Number(el.value) > prev);
+
+            if (next.length > 0) {
+                await fetchEmojis({ url, prev: Number(next[0].value), pages });
+            }
+        } catch (error) {
+            console.error("Error fetching emojis:", error);
+        }
+    };
+
+    filterEmojis = () => {
+        let filteredEmojis = emojis.map((group) =>
+            group.filter((emoji) => emoji.alt.includes(`:${emojiSearch}`))
+        );
+
+        updateEmojiDropdown(filteredEmojis);
+    };
+
+    const updateEmojiDropdown = (filteredEmojis) => {
+        base._dropdown(
+            origine,
+            function () {
+                console.log("Before:", filteredEmojis); // Debugging
+                const content = document.createElement("div");
+
+                // Parcours des groupes filtrés
+                filteredEmojis.forEach((group) => {
+                    const groupDiv = dom.createElement("div", {
+                        className: "sceditor__emoji-group",
+                    });
+
+                    // Ajout des emojis du groupe à l'élément DOM
+                    group.forEach((img) => {
+                        groupDiv.appendChild(img);
+                    });
+
+                    content.appendChild(groupDiv);
+                });
+
+                console.log("After:", filteredEmojis); // Debugging
+                return content;
+            },
+            function () {
+                console.log("");
+            },
+            true
+        );
     };
 
     registerCustomElement = (tagName) => {
@@ -316,13 +418,15 @@ export default function Editor(origine, customOptions = {}) {
     initEvents = () => {
         dom.on(globalDoc, "click", handleDocumentClick);
 
-        dom.on(origine, "focus", () =>
-            dom.addClass(editorContainer.parentNode, "focus")
-        );
-        dom.on(origine, "blur", () =>
-            dom.removeClass(editorContainer.parentNode, "focus")
-        );
-        dom.on(origine, "keydown", handleKeyDown);
+        dom.addListeners(origine, ["focus", "blur", "keydown"], (e) => {
+            if (e.type === "focus") {
+                dom.addClass(editorContainer.parentNode, "focus");
+            } else if (e.type === "blur") {
+                dom.removeClass(editorContainer.parentNode, "focus");
+            } else if (e.type === "keydown") {
+                handleKeyDown(e);
+            }
+        });
     };
 
     handleMouseDown = () => {
@@ -330,6 +434,28 @@ export default function Editor(origine, customOptions = {}) {
     };
 
     handleKeyDown = (e) => {
+        if (emojisOpen) {
+            handleEmojiSearch(e);
+        } else {
+            handleShortcuts(e);
+        }
+    };
+
+    handleEmojiSearch = (e) => {
+        if (["Enter", "Escape", " ", "Backspace"].includes(e.key)) {
+            emojisOpen = false;
+            emojiSearch = "";
+            base.closeDropDown();
+        } else {
+            if (/^[a-zA-Z0-9]$/.test(e.key)) {
+                emojiSearch += e.key; // Ajouter la lettre ou le caractère à la recherche
+            }
+            console.log(emojiSearch);
+            filterEmojis();
+        }
+    };
+
+    handleShortcuts = (e) => {
         var shortcut = [],
             SHIFT_KEYS = {
                 "`": "~",
@@ -345,7 +471,7 @@ export default function Editor(origine, customOptions = {}) {
                 0: ")",
                 "-": "_",
                 "=": "+",
-                ";": ": ",
+                ";": ":",
                 "'": '"',
                 ",": "<",
                 ".": ">",
@@ -434,6 +560,11 @@ export default function Editor(origine, customOptions = {}) {
             which = e.which,
             character =
                 SPECIAL_KEYS[which] || String.fromCharCode(which).toLowerCase();
+
+        if (e.key == ":") {
+            emojisOpen = true;
+            callEmojis();
+        }
 
         if (e.ctrlKey || e.metaKey) {
             shortcut.push("ctrl");
@@ -544,7 +675,7 @@ export default function Editor(origine, customOptions = {}) {
         return origine.value.substring(base.selectionStart, base.selectionEnd);
     };
 
-    base.createDropDown = (menuItem, name, content) => {
+    base.createDropDown = (menuItem, name, content, pos) => {
         // first click for create second click for close
         var dropDownCss,
             dropDownClass = "scedaddle-" + name;
@@ -560,18 +691,26 @@ export default function Editor(origine, customOptions = {}) {
             className: "sceddadle__dropdown " + dropDownClass,
         });
 
-        dropDownCss = utils.extend({
-            bottom: menuItem.offsetHeight + 10,
-            left: menuItem.offsetLeft + menuItem.offsetWidth / 2,
-        });
-
-        dom.css(dropdown, dropDownCss);
         dom.appendChild(dropdown, content);
         dom.appendChild(toolbarContainer, dropdown);
         dom.on(dropdown, "click focusin", function (e) {
             // stop clicks within the dropdown from being handled
             e.stopPropagation();
         });
+
+        if (pos) {
+            const { left, top } = getCaretCoordinates(origine);
+            const viewportWidth = window.innerWidth;
+            const textarea = origine.getBoundingClientRect();
+            console.log(left + textarea.left);
+            if (left + textarea.left < viewportWidth / 2) {
+                // Si le caret est dans la première moitié de l'écran, placer le dropdown à droite
+                dropdown.style.left = `-${dropdown.offsetWidth + 24}px`;
+            } else {
+                // Si le caret est dans la deuxième moitié de l'écran, placer le dropdown à gauche
+                dropdown.style.left = `${textarea.width + 24}px`;
+            }
+        }
 
         /*
         if (dropdown) {
