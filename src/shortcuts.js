@@ -1,4 +1,4 @@
-import * as utils from '../../Helpers/utils.js';
+import * as utils from './helpers/utils.js';
 
 const shortcutHandlers = {};
 

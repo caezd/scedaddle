@@ -1,5 +1,5 @@
 import ColorPicker from "simple-color-picker";
-import * as dom from "../../Helpers/DOM.js";
+import * as dom from "./helpers/dom.js";
 import Potion from "@poumon/potion";
 
 import Icon from "./icons.js";

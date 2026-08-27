@@ -1,5 +1,5 @@
-import * as dom from '../../Helpers/Dom.js';
-import * as escape from '../../Helpers/Escape.js';
+import * as dom from './helpers/dom.js';
+import * as escape from './helpers/escape.js';
 
 
 /**

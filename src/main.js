@@ -4,9 +4,9 @@ import defaultOptions from "./defaultOptions.js";
 import _tmpl from "./templates.js";
 import getCaretCoordinates from "textarea-caret";
 
-import * as dom from "../../Helpers/DOM.js";
-import * as utils from "../../Helpers/Utils.js";
-import { slugify } from "../../Helpers/String.js";
+import * as dom from "./helpers/dom.js";
+import * as utils from "./helpers/utils.js";
+import { slugify } from "./helpers/string.js";
 
 const DEFAULT_OPTIONS = defaultOptions;
 

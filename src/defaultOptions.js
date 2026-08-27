@@ -1,5 +1,3 @@
-import { attr } from "../../Helpers/DOM.js";
-
 export default {
     presetButtons: true,
     /**
